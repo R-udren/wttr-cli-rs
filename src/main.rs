@@ -15,11 +15,12 @@ async fn send_request(client: &Client, url: Url, method: Method) -> Result<Strin
     let response = client.request(method, url).send().await?;
     let status = response.status();
     let url_str = response.url().to_string();
-    let text = response.text().await?;
 
     if !status.is_success() {
         return Err(format!("Request to {} failed with status: {}", url_str, status).into());
     }
+
+    let text = response.text().await?;
     Ok(text)
 }
 fn build_url(location: &str, lang: &str) -> Url {
