@@ -28,10 +28,14 @@ jobs:
           sudo apt-get install -y gcc-mingw-w64-x86-64
 
       - name: Set up Rust target
-        run: rustup target add x86_64-pc-windows-gnu
+        run: |
+          rustup target add x86_64-pc-windows-gnu
+          rustup target add x86_64-unknown-linux-gnu
 
       - name: Build
-        run: cargo build --target x86_64-pc-windows-gnu --release
+        run: |
+          cargo build --target x86_64-pc-windows-gnu --release
+          cargo build --target x86_64-unknown-linux-gnu --release 
 
       - name: Create Release
         id: create_release
@@ -43,4 +47,6 @@ jobs:
           name: Release ${{ github.ref_name }}-alpha
           draft: false
           prerelease: true
-          files: ./target/x86_64-pc-windows-gnu/release/wttr-cli.exe
+          files:
+            ./target/x86_64-pc-windows-gnu/release/wttr-cli.exe
+            ./target/x86_64-unknown-linux-gnu/release/wttr-cli
