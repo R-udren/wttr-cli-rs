@@ -55,7 +55,7 @@ jobs:
       run: cargo clippy --target ${{ matrix.target }} --verbose -- -D warnings
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: binaries
         path: |
