@@ -7,7 +7,7 @@ const WTTR_URL: &str = "https://wttr.in";
 const OPTIONS: &str = "AFq0mM";
 
 fn create_client() -> Result<Client, Box<dyn Error>> {
-    let client = Client::builder().timeout(Duration::from_secs(10)).build()?;
+    let client = Client::builder().timeout(Duration::from_secs(5)).build()?;
     Ok(client)
 }
 
