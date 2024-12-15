@@ -18,53 +18,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        target: [ x86_64-pc-windows-gnu, x86_64-unknown-linux-gnu ]
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install cargo-chef
-        run: cargo install cargo-chef
-
-      - name: Prepare Cargo Dependencies
-        run: cargo chef prepare --recipe-path recipe.json
-
-      - name: Cache Built Dependencies
-        uses: actions/cache@v4
-        with:
-          path: target/chef
-          key: deps-${{ runner.os }}-${{ hashFiles('**/recipe.json') }}
-          restore-keys: |
-            deps-${{ runner.os }}-
-
-      - name: Build Dependency Layer
-        run: cargo chef cook --release --recipe-path recipe.json
-
       - name: Install cross-compilation tools
-        if: matrix.target == 'x86_64-pc-windows-gnu'
         run: |
           sudo apt-get update
           sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64
 
       - name: Set up Rust target
-        run: rustup target add ${{ matrix.target }}
+        run: rustup target add x86_64-pc-windows-gnu
 
       - name: Build
-        run: cargo build --target ${{ matrix.target }} --release
+        run: cargo build --target x86_64-pc-windows-gnu --release
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: binaries
-          path: |
-            ./target/x86_64-pc-windows-gnu/release/wttr-cli.exe
-            ./target/x86_64-unknown-linux-gnu/release/wttr-cli
+          path: ./target/x86_64-pc-windows-gnu/release/wttr-cli.exe
           overwrite: true
 
   release:
-    name: Release ${{ github.ref }}
+    name: Release
     needs: build
     runs-on: ubuntu-latest
 
@@ -82,10 +58,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.event.release.tag_name }}
+          name: Release ${{ github.event.release.tag_name }}
           draft: false
           prerelease: true
-          files: |
-            ./target/x86_64-pc-windows-gnu/release/wttr-cli.exe
-            ./target/x86_64-unknown-linux-gnu/release/wttr-cli
+          files: ./target/x86_64-pc-windows-gnu/release/wttr-cli.exe
