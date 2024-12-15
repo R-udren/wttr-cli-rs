@@ -1,0 +1,17 @@
+[package]
+name = "wttr-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+reqwest = { version = "0.12.9", features = ["blocking"] }
+clap = { version = "4.5.23", features = ["usage", "derive"] }
+tokio = { version = "1.42.0", features = ["rt", "rt-multi-thread", "macros"] }
+
+
+[profile.release]
+opt-level = "s"
+lto = true
+debug = false
+panic = "abort"
+strip = "debuginfo"
