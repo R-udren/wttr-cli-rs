@@ -5,13 +5,14 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  release:
+    types: [published]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -52,3 +53,55 @@ jobs:
 
     - name: Run Clippy
       run: cargo clippy --target ${{ matrix.target }} --verbose -- -D warnings
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: binaries
+        path: |
+          ./target/${{ matrix.target }}/release/wttr-cli*
+        
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: binaries
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: true
+
+    - name: Upload Release Asset (Linux)
+      if: matrix.target == 'x86_64-unknown-linux-gnu'
+      uses: actions/upload-release-asset@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./target/x86_64-unknown-linux-gnu/release/wttr-cli
+        asset_name: wttr-cli
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release Asset (Windows)
+      if: matrix.target == 'x86_64-pc-windows-gnu'
+      uses: actions/upload-release-asset@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./target/x86_64-pc-windows-gnu/release/wttr-cli.exe
+        asset_name: wttr-cli.exe
+        asset_content_type: application/octet-stream
