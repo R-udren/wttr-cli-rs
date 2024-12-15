@@ -24,7 +24,8 @@ jobs:
 
       - name: Install cross-compilation tools
         run: |
-          sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-x86-64
 
       - name: Set up Rust target
         run: rustup target add x86_64-pc-windows-gnu
@@ -38,8 +39,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v0.1.0-alpha
-          name: Release v0.1.0-alpha
+          tag_name: ${{ github.ref_name }}-alpha
+          name: Release ${{ github.ref_name }}-alpha
           draft: false
           prerelease: true
           files: ./target/x86_64-pc-windows-gnu/release/wttr-cli.exe
