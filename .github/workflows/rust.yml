@@ -23,7 +23,6 @@ jobs:
 
       - name: Install cross-compilation tools
         run: |
-          sudo apt-get update
           sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64
 
       - name: Set up Rust target
@@ -58,7 +57,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.release.tag_name }}
+          tag_name: v0.1.0
           name: Release ${{ github.event.release.tag_name }}
           draft: false
           prerelease: true
