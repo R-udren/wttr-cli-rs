@@ -15,7 +15,8 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  release:
+    name: Release
     runs-on: ubuntu-latest
 
     steps:
@@ -31,34 +32,14 @@ jobs:
       - name: Build
         run: cargo build --target x86_64-pc-windows-gnu --release
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: binaries
-          path: ./target/x86_64-pc-windows-gnu/release/wttr-cli.exe
-          overwrite: true
-
-  release:
-    name: Release
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: binaries
-
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v0.1.0
-          name: Release ${{ github.event.release.tag_name }}
+          tag_name: v0.1.0-alpha
+          name: Release v0.1.0-alpha
           draft: false
           prerelease: true
           files: ./target/x86_64-pc-windows-gnu/release/wttr-cli.exe
