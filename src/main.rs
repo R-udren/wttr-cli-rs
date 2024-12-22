@@ -23,8 +23,8 @@ async fn send_request(client: &Client, url: Url, method: Method) -> Result<Strin
     let text = response.text().await?;
     Ok(text)
 }
-fn build_url(location: &str, lang: &str) -> Url {
-    format!("{}/{}?{}&lang={}", WTTR_URL, location, OPTIONS, lang)
+fn build_url(location: &str, lang: &str, options: &str) -> Url {
+    format!("{}/{}?{}&lang={}", WTTR_URL, location, options, lang)
         .parse()
         .unwrap()
 }
@@ -54,6 +54,13 @@ struct Cli {
         help = "Specify the language (e.g., ru, fr, de)."
     )]
     lang: String,
+    #[arg(
+        short,
+        long,
+        default_value = OPTIONS,
+        help = "Specify the options to use. Refer to https://wttr.in/:help for more information."
+    )]
+    options: String,
 }
 
 #[tokio::main]
@@ -61,11 +68,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let args = Cli::parse();
     let locations = args.locations;
     let lang = args.lang.as_str();
+    let options = args.options.as_str();
 
     let client = create_client()?;
 
     for location in locations {
-        let url = build_url(&location, lang);
+        let url = build_url(&location, lang, options);
         let response_body = send_request(&client, url, Method::GET).await?;
         display_response(response_body);
     }
