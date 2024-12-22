@@ -1,6 +1,6 @@
 [package]
 name = "wttr-cli"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["R-Udren"]
 description = "A lightweight Rust CLI tool to fetch weather information using wttr.in."
 license = "MIT"

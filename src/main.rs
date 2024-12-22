@@ -58,7 +58,7 @@ struct Cli {
         short,
         long,
         default_value = OPTIONS,
-        help = "Specify the options to use. Refer to https://wttr.in/:help for more information."
+        help = "Specify the options to use. Refer to https://wttr.in/:help for more information. A and F are recommended."
     )]
     options: String,
 }
