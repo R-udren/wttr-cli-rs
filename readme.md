@@ -93,9 +93,4 @@ or fixes to the project.
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
----
 
-## Acknowledgments
-
-- Thanks to [wttr.in](https://wttr.in) for providing an awesome weather API!
-- A big thanks to the Rust community for maintaining excellent tools and libraries!
